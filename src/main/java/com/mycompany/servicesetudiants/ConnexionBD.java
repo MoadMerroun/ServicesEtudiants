@@ -18,7 +18,8 @@ public class ConnexionBD {
     public static Connection connecterbd(){
         try {
             Connection conn=null;
-            conn=DriverManager.getConnection("jdbc:mysql://sql11.freemysqlhosting.net:3306/sql11462413","sql11462413","hY75MSn6KJ");
+            //conn=DriverManager.getConnection("jdbc:mysql://sql11.freemysqlhosting.net:3306/sql11462413","sql11462413","hY75MSn6KJ");
+            conn=DriverManager.getConnection("jdbc:mysql://localhost:3306/demandedocument","root","");
             return conn;
         } catch (SQLException ex) {
             Logger.getLogger(ConnexionBD.class.getName()).log(Level.SEVERE, null, ex);

@@ -139,6 +139,7 @@ public class Attestation_scolarite extends javax.swing.JFrame {
     jLabel11.setForeground(new java.awt.Color(81, 69, 199));
     jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
     jLabel11.setText("Administration");
+    jLabel11.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     jLabel11.addMouseListener(new java.awt.event.MouseAdapter() {
         public void mouseClicked(java.awt.event.MouseEvent evt) {
             jLabel11MouseClicked(evt);
@@ -432,7 +433,7 @@ public class Attestation_scolarite extends javax.swing.JFrame {
         int i = jTable1.getSelectedRow();
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         if(i>=0){
-            GenererDemandeStage.DemandeStage(model.getValueAt(i, 0).toString(), model.getValueAt(i, 1).toString(), model.getValueAt(i, 2).toString(), model.getValueAt(i, 3).toString(),model.getValueAt(i, 4).toString(),model.getValueAt(i, 5).toString(),model.getValueAt(i, 6).toString(),model.getValueAt(i, 7).toString(),model.getValueAt(i, 8).toString());
+            GenererPdf.DemandeStage(model.getValueAt(i, 0).toString(), model.getValueAt(i, 1).toString(), model.getValueAt(i, 2).toString(), model.getValueAt(i, 3).toString(),model.getValueAt(i, 4).toString(),model.getValueAt(i, 5).toString(),model.getValueAt(i, 6).toString(),model.getValueAt(i, 7).toString(),model.getValueAt(i, 8).toString());
 
             //model.removeRow(i);
         }else{

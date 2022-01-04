@@ -4,6 +4,15 @@
  */
 package com.mycompany.servicesetudiants;
 
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -12,14 +21,54 @@ import javax.swing.table.DefaultTableModel;
  * @author Surface Pro
  */
 public class Convention_stage extends javax.swing.JFrame {
-
+    Connection conn = ConnexionBD.connecterbd();
+    PreparedStatement ps = null;
+    ResultSet rs= null;
+    ResultSetMetaData Rss = null;
     /**
      * Creates new form Convention_stage
      */
     public Convention_stage() {
         initComponents();
+        ConnexionBD.connecterbd();
+        UPdate_table();
     }
-
+    public void UPdate_table(){
+        int c;
+        String login="SELECT Tel, StartDate, EndDate, convocationstage.Apoge, convocationstage.Nom, convocationstage.Prenom, convocationstage.Filiere, RaisonSociale, Addresse, EmailEntreprise, NomEncadrant, etudiants.EmailInstitutionnel FROM convocationstage inner join etudiants on etudiants.Apoge=convocationstage.Apoge";
+        try {
+            ps=conn.prepareStatement(login);
+            rs=ps.executeQuery();
+            Rss = rs.getMetaData();
+            c=Rss.getColumnCount();
+            
+            DefaultTableModel Df =(DefaultTableModel) jTable2.getModel();
+            
+            Df.setRowCount(0);
+            
+            while(rs.next()){
+                Vector v2 = new Vector();
+                for(int i=1;i<=c;i++){
+                    v2.add(rs.getString("Tel"));//0
+                    v2.add(rs.getString("StartDate"));//1
+                    v2.add(rs.getString("EndDate"));//2
+                    v2.add(rs.getString("Apoge"));//3
+                    v2.add(rs.getString("Nom"));//4
+                    v2.add(rs.getString("Prenom"));//5
+                    v2.add(rs.getString("Filiere"));//6
+                    v2.add(rs.getString("RaisonSociale"));//7
+                    v2.add(rs.getString("Addresse"));//8
+                    v2.add(rs.getString("EmailEntreprise"));//9
+                    v2.add(rs.getString("NomEncadrant"));//10
+                    v2.add(rs.getString("EmailInstitutionnel"));//11
+                    }
+                Df.addRow(v2);
+                
+            }
+        }catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -29,13 +78,15 @@ public class Convention_stage extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
         Refuser = new javax.swing.JButton();
         Accepter = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTable2 = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         jPanel10 = new javax.swing.JPanel();
@@ -58,18 +109,6 @@ public class Convention_stage extends javax.swing.JFrame {
         jLabel12 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setUndecorated(true);
-
-        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jPanel4.setBackground(new java.awt.Color(126, 148, 207));
-
-        jLabel10.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
-        jLabel10.setForeground(new java.awt.Color(211, 222, 234));
-        jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel10.setText("Les demande de stage : ");
-
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null, null},
@@ -89,8 +128,25 @@ public class Convention_stage extends javax.swing.JFrame {
     );
     jScrollPane1.setViewportView(jTable1);
 
+    setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+    setUndecorated(true);
+
+    jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+    jPanel4.setBackground(new java.awt.Color(126, 148, 207));
+
+    jLabel10.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
+    jLabel10.setForeground(new java.awt.Color(211, 222, 234));
+    jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+    jLabel10.setText("Les demande de stage : ");
+
     Refuser.setBackground(new java.awt.Color(255, 80, 80));
     Refuser.setText("Refuser");
+    Refuser.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            RefuserActionPerformed(evt);
+        }
+    });
 
     Accepter.setBackground(new java.awt.Color(80, 255, 80));
     Accepter.setText("Accepter");
@@ -99,6 +155,25 @@ public class Convention_stage extends javax.swing.JFrame {
             AccepterActionPerformed(evt);
         }
     });
+
+    jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        new Object [][] {
+            {null, null, null, null, null, null, null, null, null},
+            {null, null, null, null, null, null, null, null, null},
+            {null, null, null, null, null, null, null, null, null},
+            {null, null, null, null, null, null, null, null, null}
+        },
+        new String [] {
+            "Tel", "StartDate", "EndDate", "Apoge", "Nom", "Prenom", "Filiere", "RaisonSociale", "Addresse", "EmailEntreprise", "NomEncadrant","EmailInstitutionnel"
+        }
+    )
+    {
+        public boolean isCellEditable(int row, int column){
+            return false;
+        }
+    }
+    );
+    jScrollPane2.setViewportView(jTable2);
 
     javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
     jPanel4.setLayout(jPanel4Layout);
@@ -109,24 +184,24 @@ public class Convention_stage extends javax.swing.JFrame {
             .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(0, 0, Short.MAX_VALUE))
         .addGroup(jPanel4Layout.createSequentialGroup()
-            .addContainerGap()
-            .addComponent(jScrollPane1)
-            .addContainerGap())
-        .addGroup(jPanel4Layout.createSequentialGroup()
             .addGap(222, 222, 222)
             .addComponent(Accepter, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 296, Short.MAX_VALUE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(Refuser, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(217, 217, 217))
+        .addGroup(jPanel4Layout.createSequentialGroup()
+            .addContainerGap()
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 1062, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
     );
     jPanel4Layout.setVerticalGroup(
         jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
         .addGroup(jPanel4Layout.createSequentialGroup()
             .addContainerGap()
             .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 191, Short.MAX_VALUE)
+            .addGap(38, 38, 38)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 160, Short.MAX_VALUE)
             .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                 .addComponent(Accepter, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addComponent(Refuser, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -139,6 +214,7 @@ public class Convention_stage extends javax.swing.JFrame {
     jLabel11.setForeground(new java.awt.Color(81, 69, 199));
     jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
     jLabel11.setText("Administration");
+    jLabel11.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     jLabel11.addMouseListener(new java.awt.event.MouseAdapter() {
         public void mouseClicked(java.awt.event.MouseEvent evt) {
             jLabel11MouseClicked(evt);
@@ -429,12 +505,19 @@ public class Convention_stage extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void AccepterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AccepterActionPerformed
-        int i = jTable1.getSelectedRow();
-        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        if(i>=0){
-            GenererDemandeStage.DemandeStage(model.getValueAt(i, 0).toString(), model.getValueAt(i, 1).toString(), model.getValueAt(i, 2).toString(), model.getValueAt(i, 3).toString(),model.getValueAt(i, 4).toString(),model.getValueAt(i, 5).toString(),model.getValueAt(i, 6).toString(),model.getValueAt(i, 7).toString(),model.getValueAt(i, 8).toString());
-
-            //model.removeRow(i);
+        int i = jTable2.getSelectedRow();
+        DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
+        if(i>=0){            
+            try {
+                GenererPdf.ConventionStage(model.getValueAt(i, 1).toString(), model.getValueAt(i, 2).toString(), model.getValueAt(i, 7).toString(), model.getValueAt(i, 3).toString(),model.getValueAt(i, 4).toString(),model.getValueAt(i, 5).toString(),model.getValueAt(i, 6).toString(),model.getValueAt(i, 11).toString());
+                String sql = "INSERT INTO convention_stage_historique values('"+model.getValueAt(i, 0).toString()+"','"+model.getValueAt(i, 1).toString()+"','"+model.getValueAt(i, 2).toString()+"','"+model.getValueAt(i, 3).toString()+"','"+model.getValueAt(i, 4).toString()+"','"+model.getValueAt(i, 5).toString()+"','"+model.getValueAt(i, 6).toString()+"','"+model.getValueAt(i, 7).toString()+"','"+model.getValueAt(i, 8).toString()+"','"+model.getValueAt(i, 9).toString()+"','"+model.getValueAt(i, 10).toString()+"','Acceptée')";
+                ps.executeUpdate(sql);
+                String supprimer = "DELETE FROM convocationstage WHERE Tel = '"+model.getValueAt(i, 0).toString()+"' AND StartDate = '"+model.getValueAt(i, 1).toString()+"' AND EndDate = '"+model.getValueAt(i, 2).toString()+"' AND Apoge = '"+model.getValueAt(i, 3).toString()+"' AND Nom = '"+model.getValueAt(i, 4).toString()+"' AND Prenom = '"+model.getValueAt(i, 5).toString()+"' AND Filiere = '"+model.getValueAt(i, 6).toString()+"' AND RaisonSociale = '"+model.getValueAt(i, 7).toString()+"' AND Addresse = '"+model.getValueAt(i, 8).toString()+"' AND EmailEntreprise = '"+model.getValueAt(i, 9).toString()+"' AND NomEncadrant = '"+model.getValueAt(i, 10).toString()+"'";
+                ps.executeUpdate(supprimer);
+                model.removeRow(i);
+            } catch (SQLException ex) {
+                Logger.getLogger(Demande_stage.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }else{
             JOptionPane.showMessageDialog(null, "Selectionner une ligne !");
         }
@@ -488,6 +571,30 @@ public class Convention_stage extends javax.swing.JFrame {
         dispose();
         new Historique().setVisible(true);
     }//GEN-LAST:event_jLabel6MouseClicked
+
+    private void RefuserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefuserActionPerformed
+        int i = jTable2.getSelectedRow();
+        DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
+        if(i>=0){            
+            try {
+                try {
+                    SendEmail.envoyerEmailRefus(model.getValueAt(i, 11).toString(),"La convention de stage",model.getValueAt(i, 6).toString()+model.getValueAt(i, 5).toString());
+                    String sql = "INSERT INTO convention_stage_historique values('"+model.getValueAt(i, 0).toString()+"','"+model.getValueAt(i, 1).toString()+"','"+model.getValueAt(i, 2).toString()+"','"+model.getValueAt(i, 3).toString()+"','"+model.getValueAt(i, 4).toString()+"','"+model.getValueAt(i, 5).toString()+"','"+model.getValueAt(i, 6).toString()+"','"+model.getValueAt(i, 7).toString()+"','"+model.getValueAt(i, 8).toString()+"','"+model.getValueAt(i, 9).toString()+"','"+model.getValueAt(i, 10).toString()+"','Refusée')";
+                    ps.executeUpdate(sql);
+                    String supprimer = "DELETE FROM convocationstage WHERE Tel = '"+model.getValueAt(i, 0).toString()+"' AND StartDate = '"+model.getValueAt(i, 1).toString()+"' AND EndDate = '"+model.getValueAt(i, 2).toString()+"' AND Apoge = '"+model.getValueAt(i, 3).toString()+"' AND Nom = '"+model.getValueAt(i, 4).toString()+"' AND Prenom = '"+model.getValueAt(i, 5).toString()+"' AND Filiere = '"+model.getValueAt(i, 6).toString()+"' AND RaisonSociale = '"+model.getValueAt(i, 7).toString()+"' AND Addresse = '"+model.getValueAt(i, 8).toString()+"' AND EmailEntreprise = '"+model.getValueAt(i, 9).toString()+"' AND NomEncadrant = '"+model.getValueAt(i, 10).toString()+"'";
+                    ps.executeUpdate(supprimer);
+                    model.removeRow(i);
+                } catch (IOException ex) {
+                    Logger.getLogger(Demande_stage.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                //model.removeRow(i);
+            } catch (SQLException ex) {
+                Logger.getLogger(Demande_stage.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }else{
+            JOptionPane.showMessageDialog(null, "Selectionner une ligne !");
+        }
+    }//GEN-LAST:event_RefuserActionPerformed
 
     /**
      * @param args the command line arguments
@@ -552,6 +659,8 @@ public class Convention_stage extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTable2;
     // End of variables declaration//GEN-END:variables
 }

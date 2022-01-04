@@ -4,11 +4,15 @@
  */
 package com.mycompany.servicesetudiants;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
@@ -66,6 +70,7 @@ public class Demande_stage extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, e);
         }
     }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -344,6 +349,11 @@ public class Demande_stage extends javax.swing.JFrame {
 
     Refuser.setBackground(new java.awt.Color(255, 80, 80));
     Refuser.setText("Refuser");
+    Refuser.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            RefuserActionPerformed(evt);
+        }
+    });
 
     Accepter.setBackground(new java.awt.Color(80, 255, 80));
     Accepter.setText("Accepter");
@@ -363,12 +373,12 @@ public class Demande_stage extends javax.swing.JFrame {
             .addGap(0, 0, Short.MAX_VALUE))
         .addGroup(jPanel4Layout.createSequentialGroup()
             .addContainerGap()
-            .addComponent(jScrollPane1)
-            .addContainerGap())
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1062, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         .addGroup(jPanel4Layout.createSequentialGroup()
             .addGap(222, 222, 222)
             .addComponent(Accepter, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 296, Short.MAX_VALUE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(Refuser, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGap(217, 217, 217))
     );
@@ -392,6 +402,7 @@ public class Demande_stage extends javax.swing.JFrame {
     jLabel11.setForeground(new java.awt.Color(81, 69, 199));
     jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
     jLabel11.setText("Administration");
+    jLabel11.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     jLabel11.addMouseListener(new java.awt.event.MouseAdapter() {
         public void mouseClicked(java.awt.event.MouseEvent evt) {
             jLabel11MouseClicked(evt);
@@ -480,10 +491,17 @@ public class Demande_stage extends javax.swing.JFrame {
     private void AccepterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AccepterActionPerformed
         int i = jTable1.getSelectedRow();
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        if(i>=0){
-            GenererDemandeStage.DemandeStage(model.getValueAt(i, 0).toString(), model.getValueAt(i, 1).toString(), model.getValueAt(i, 2).toString(), model.getValueAt(i, 3).toString(),model.getValueAt(i, 4).toString(),model.getValueAt(i, 5).toString(),model.getValueAt(i, 6).toString(),model.getValueAt(i, 7).toString(),model.getValueAt(i, 8).toString());
-            
-            //model.removeRow(i);
+        if(i>=0){            
+            try {
+                GenererPdf.DemandeStage(model.getValueAt(i, 0).toString(), model.getValueAt(i, 1).toString(), model.getValueAt(i, 2).toString(), model.getValueAt(i, 3).toString(),model.getValueAt(i, 4).toString(),model.getValueAt(i, 5).toString(),model.getValueAt(i, 6).toString(),model.getValueAt(i, 7).toString(),model.getValueAt(i, 8).toString());
+                String sql = "INSERT INTO Demande_stage_historique values('"+model.getValueAt(i, 0).toString()+"','"+model.getValueAt(i, 1).toString()+"','"+model.getValueAt(i, 2).toString()+"','"+model.getValueAt(i, 3).toString()+"','"+model.getValueAt(i, 4).toString()+"','"+model.getValueAt(i, 5).toString()+"','"+model.getValueAt(i, 6).toString()+"','"+model.getValueAt(i, 7).toString()+"','"+model.getValueAt(i, 8).toString()+"','Acceptée')";
+                ps.executeUpdate(sql);
+                String supprimer = "DELETE FROM stage WHERE TypeStage = '"+model.getValueAt(i, 0).toString()+"' AND DebutStage = '"+model.getValueAt(i, 1).toString()+"' AND FinStage = '"+model.getValueAt(i, 2).toString()+"' AND NomEntreprise = '"+model.getValueAt(i, 3).toString()+"' AND Apoge = '"+model.getValueAt(i, 4).toString()+"'";
+                ps.executeUpdate(supprimer);
+                model.removeRow(i);
+            } catch (SQLException ex) {
+                Logger.getLogger(Demande_stage.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }else{
             JOptionPane.showMessageDialog(null, "Selectionner une ligne !");
         }
@@ -537,6 +555,30 @@ public class Demande_stage extends javax.swing.JFrame {
        dispose();
        new Home().setVisible(true);
     }//GEN-LAST:event_jLabel11MouseClicked
+
+    private void RefuserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefuserActionPerformed
+        int i = jTable1.getSelectedRow();
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        if(i>=0){            
+            try {
+                try {
+                    SendEmail.envoyerEmailRefus(model.getValueAt(i, 8).toString(),"La demande de stage",model.getValueAt(i, 6).toString()+" "+model.getValueAt(i, 5).toString());
+                    String sql = "INSERT INTO Demande_stage_historique values('"+model.getValueAt(i, 0).toString()+"','"+model.getValueAt(i, 1).toString()+"','"+model.getValueAt(i, 2).toString()+"','"+model.getValueAt(i, 3).toString()+"','"+model.getValueAt(i, 4).toString()+"','"+model.getValueAt(i, 5).toString()+"','"+model.getValueAt(i, 6).toString()+"','"+model.getValueAt(i, 7).toString()+"','"+model.getValueAt(i, 8).toString()+"','Refusée')";
+                    ps.executeUpdate(sql);
+                    String supprimer = "DELETE FROM stage WHERE TypeStage = '"+model.getValueAt(i, 0).toString()+"' AND DebutStage = '"+model.getValueAt(i, 1).toString()+"' AND FinStage = '"+model.getValueAt(i, 2).toString()+"' AND NomEntreprise = '"+model.getValueAt(i, 3).toString()+"' AND Apoge = '"+model.getValueAt(i, 4).toString()+"'";
+                    ps.executeUpdate(supprimer);
+                    model.removeRow(i);
+                } catch (IOException ex) {
+                    Logger.getLogger(Demande_stage.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                //model.removeRow(i);
+            } catch (SQLException ex) {
+                Logger.getLogger(Demande_stage.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }else{
+            JOptionPane.showMessageDialog(null, "Selectionner une ligne !");
+        }
+    }//GEN-LAST:event_RefuserActionPerformed
         
     
     /**

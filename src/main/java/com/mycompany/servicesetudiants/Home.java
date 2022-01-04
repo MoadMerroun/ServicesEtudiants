@@ -27,7 +27,7 @@ public class Home extends javax.swing.JFrame {
             ps=conn.prepareStatement(login);
             rs=ps.executeQuery();
             if(rs.next()){
-                jLabel26.setText(rs.getString("count(TypeStage)"));
+                jLabel54.setText(rs.getString("count(TypeStage)"));
             }
              
         }catch (Exception e) {
@@ -41,12 +41,73 @@ public class Home extends javax.swing.JFrame {
             ps=conn.prepareStatement(login);
             rs=ps.executeQuery();
             if(rs.next()){
-                jLabel47.setText(rs.getString("count(Tel)"));
+                jLabel29.setText(rs.getString("count(Tel)"));
             }
              
         }catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
         }
+    }
+    public void afficherNbReleveNote(){
+        int c;
+        String login="SELECT count(Nom) FROM relevenotes";
+        try {
+            ps=conn.prepareStatement(login);
+            rs=ps.executeQuery();
+            if(rs.next()){
+                jLabel27.setText(rs.getString("count(Nom)"));
+            }
+             
+        }catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
+    public void afficherNbAttestationScolarite(){
+        int c;
+        String login="SELECT count(Nom) FROM attestationscolarite";
+        try {
+            ps=conn.prepareStatement(login);
+            rs=ps.executeQuery();
+            if(rs.next()){
+                jLabel26.setText(rs.getString("count(Nom)"));
+            }
+             
+        }catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
+    public void afficherNbAttestationReussite(){
+        int c;
+        String login="SELECT count(Nom) FROM attestationreussite";
+        try {
+            ps=conn.prepareStatement(login);
+            rs=ps.executeQuery();
+            if(rs.next()){
+                jLabel47.setText(rs.getString("count(Nom)"));
+            }
+             
+        }catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
+    public void afficherNbAttestationInscription(){
+        int c;
+        String login="SELECT count(Nom) FROM attestationinscription";
+        try {
+            ps=conn.prepareStatement(login);
+            rs=ps.executeQuery();
+            if(rs.next()){
+                jLabel51.setText(rs.getString("count(Nom)"));
+            }
+             
+        }catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
+    public void afficherNbTotal(){
+        int total = Integer.parseInt(jLabel51.getText()) + Integer.parseInt(jLabel47.getText()) + Integer.parseInt(jLabel26.getText()) 
+                + Integer.parseInt(jLabel27.getText()) +Integer.parseInt(jLabel29.getText())+Integer.parseInt(jLabel54.getText());
+        jLabel25.setText(String.valueOf(total));
     }
 
     /**
@@ -57,6 +118,11 @@ public class Home extends javax.swing.JFrame {
         ConnexionBD.connecterbd();
         afficherNbDemandesStage();
         afficherNbConventionStage();
+        afficherNbAttestationInscription();
+        afficherNbAttestationReussite();
+        afficherNbAttestationScolarite();
+        afficherNbReleveNote();
+        afficherNbTotal();
     }
 
     /**
@@ -402,7 +468,7 @@ public class Home extends javax.swing.JFrame {
 
         jLabel23.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel23.setForeground(new java.awt.Color(211, 222, 234));
-        jLabel23.setText("Demandes de stage");
+        jLabel23.setText("Attestation de scolarité");
 
         jLabel26.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel26.setForeground(new java.awt.Color(211, 222, 234));
@@ -416,7 +482,7 @@ public class Home extends javax.swing.JFrame {
 
         jLabel24.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel24.setForeground(new java.awt.Color(211, 222, 234));
-        jLabel24.setText("Demandes de stage");
+        jLabel24.setText("Relevé de note");
 
         jLabel28.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/docs.png"))); // NOI18N
 
@@ -425,7 +491,7 @@ public class Home extends javax.swing.JFrame {
 
         jLabel30.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel30.setForeground(new java.awt.Color(211, 222, 234));
-        jLabel30.setText("Demandes de stage");
+        jLabel30.setText("Conventions de stage");
 
         jLabel46.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/docs.png"))); // NOI18N
 
@@ -434,13 +500,13 @@ public class Home extends javax.swing.JFrame {
 
         jLabel48.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel48.setForeground(new java.awt.Color(211, 222, 234));
-        jLabel48.setText("Conventions de stage");
+        jLabel48.setText("Attestation de réussite");
 
         jLabel49.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/docs.png"))); // NOI18N
 
         jLabel50.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel50.setForeground(new java.awt.Color(211, 222, 234));
-        jLabel50.setText("Demandes de stage");
+        jLabel50.setText("Attestation d’inscription");
 
         jLabel51.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel51.setForeground(new java.awt.Color(211, 222, 234));
@@ -476,41 +542,44 @@ public class Home extends javax.swing.JFrame {
                                 .addComponent(jLabel20)
                                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel4Layout.createSequentialGroup()
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(jPanel4Layout.createSequentialGroup()
                                         .addGap(72, 72, 72)
-                                        .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                                        .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel4Layout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jLabel23))))))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGap(391, 391, 391)
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(jPanel4Layout.createSequentialGroup()
-                                        .addGap(20, 20, 20)
-                                        .addComponent(jLabel25, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                            .addGroup(jPanel4Layout.createSequentialGroup()
                                 .addComponent(jLabel21)
                                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel4Layout.createSequentialGroup()
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel30, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(jPanel4Layout.createSequentialGroup()
                                         .addGap(58, 58, 58)
-                                        .addComponent(jLabel29, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                        .addComponent(jLabel29, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel4Layout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jLabel30, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addGap(71, 71, 71))
                             .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(jLabel46)
                                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel4Layout.createSequentialGroup()
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel48, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                                .addGap(20, 20, 20)
+                                                .addComponent(jLabel25, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))))
                                     .addGroup(jPanel4Layout.createSequentialGroup()
-                                        .addGap(79, 79, 79)
-                                        .addComponent(jLabel47, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                        .addGap(71, 71, 71)
+                                        .addComponent(jLabel46)
+                                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                                .addGap(79, 79, 79)
+                                                .addComponent(jLabel47, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jLabel48, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel4Layout.createSequentialGroup()
                                 .addComponent(jLabel52)
@@ -525,12 +594,12 @@ public class Home extends javax.swing.JFrame {
                                 .addComponent(jLabel49)
                                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel4Layout.createSequentialGroup()
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel50, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(jPanel4Layout.createSequentialGroup()
                                         .addGap(64, 64, 64)
-                                        .addComponent(jLabel51, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
-                .addContainerGap(42, Short.MAX_VALUE))
+                                        .addComponent(jLabel51, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel4Layout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jLabel50)))))))
+                .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

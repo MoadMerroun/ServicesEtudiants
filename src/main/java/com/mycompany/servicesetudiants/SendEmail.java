@@ -21,7 +21,43 @@ import javax.swing.JOptionPane;
  * @author Surface Pro
  */
 public class SendEmail {
-	public static void envoyerEmailDemandeDeStage(String toEmail, String doc, String nom, String docPdf, String nomComplet) throws IOException {
+	public static void envoyerEmailAvecDoc(String toEmail, String doc, String docPdf, String nomComplet) throws IOException {
+
+		// Informations d'Admin
+		final String password = "ensate@2000";
+		String fromEmail = "services.etudiants.ensate@gmail.com";
+
+		Properties properties = new Properties();
+		properties.put("mail.smtp.auth", "true");
+		properties.put("mail.smtp.starttls.enable", "true");
+		properties.put("mail.smtp.host", "smtp.gmail.com");
+		properties.put("mail.smtp.port", "587");
+		Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
+			protected PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication(fromEmail, password);
+			}
+		});
+
+		try {
+			MimeMessage msg = new MimeMessage(session);
+			msg.setFrom(new InternetAddress(fromEmail));
+			msg.addRecipient(Message.RecipientType.TO, new InternetAddress(toEmail));
+			msg.setSubject(doc+" de l'étudiant "+nomComplet);
+			Multipart contenu= new MimeMultipart();
+                        MimeBodyPart contneuText = new MimeBodyPart();
+                        contneuText.setText("Bonjour "+nomComplet + ",\n" + "Veuillez trouvez ci-joint "+doc+" que vous avez demandez.\nCordialement");
+                        MimeBodyPart attachementpdf = new MimeBodyPart();
+                        attachementpdf.attachFile("src\\main\\resources\\Documents\\"+docPdf);
+                        contenu.addBodyPart(contneuText);
+                        contenu.addBodyPart(attachementpdf);
+                        msg.setContent(contenu);
+			Transport.send(msg);
+			JOptionPane.showMessageDialog(null, "L'email contenant le document demandé est envoyé à l'étudiant "+nomComplet);
+		} catch (MessagingException ex) {
+			Logger.getLogger(SendEmail.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
+        public static void envoyerEmailRefus(String toEmail, String doc, String nomComplet) throws IOException {
 
 		// Informations d'Admin
 		final String password = "ensate@2000";
@@ -43,20 +79,14 @@ public class SendEmail {
 			MimeMessage msg = new MimeMessage(session);
 			msg.setFrom(new InternetAddress(fromEmail));
 			msg.addRecipient(Message.RecipientType.TO, new InternetAddress(toEmail));
-			msg.setSubject("Demande de stage de l'étudiant "+nomComplet);
+			msg.setSubject(doc+" de l'étudiant "+nomComplet); 
 			Multipart contenu= new MimeMultipart();
                         MimeBodyPart contneuText = new MimeBodyPart();
-                        contneuText.setText("Bonjour, " + "\n" + "Veuillez trouvez ci-joint "+doc+" que vous avez demandez.\nCordialement");
-                        MimeBodyPart attachementpdf = new MimeBodyPart();
-                        attachementpdf.attachFile("src\\main\\resources\\Documents\\"+docPdf+nom+".pdf");
-                        
+                        contneuText.setText("Bonjour "+nomComplet + ",\n" + doc+ " que vous avez demandez est refusée.\nCordialement");
                         contenu.addBodyPart(contneuText);
-                        contenu.addBodyPart(attachementpdf);
-                        
                         msg.setContent(contenu);
-                        
 			Transport.send(msg);
-			JOptionPane.showMessageDialog(null, "L'email contenant le document demandé est envoyé à l'étudiant "+nomComplet);
+			JOptionPane.showMessageDialog(null, "L'email de refus est envoyé à l'étudiant "+nomComplet);
 		} catch (MessagingException ex) {
 			Logger.getLogger(SendEmail.class.getName()).log(Level.SEVERE, null, ex);
 		}

@@ -4,6 +4,15 @@
  */
 package com.mycompany.servicesetudiants;
 
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -12,14 +21,50 @@ import javax.swing.table.DefaultTableModel;
  * @author Surface Pro
  */
 public class Attestation_reussite extends javax.swing.JFrame {
-
+    Connection conn = ConnexionBD.connecterbd();
+    PreparedStatement ps = null;
+    ResultSet rs= null;
+    ResultSetMetaData Rss = null;
     /**
      * Creates new form Attestation_reussite
      */
     public Attestation_reussite() {
         initComponents();
+        ConnexionBD.connecterbd();
+        UPdate_table();
     }
-
+    public void UPdate_table(){
+        int c;
+        String login="SELECT attestationreussite.Nom, attestationreussite.Prenom, attestationreussite.DateNaissance, attestationreussite.LieuNaissance,  attestationreussite.Filiere , attestationreussite.AnneeAttestation, attestationreussite.Apoge, etudiants.EmailInstitutionnel FROM attestationreussite inner join etudiants on attestationreussite.Apoge=etudiants.Apoge";
+        try {
+            ps=conn.prepareStatement(login);
+            rs=ps.executeQuery();
+            Rss = rs.getMetaData();
+            c=Rss.getColumnCount();
+            
+            DefaultTableModel Df =(DefaultTableModel) jTable1.getModel();
+            
+            Df.setRowCount(0);
+            
+            while(rs.next()){
+                Vector v2 = new Vector();
+                for(int i=1;i<=c;i++){
+                    v2.add(rs.getString("Nom"));//0
+                    v2.add(rs.getString("Prenom"));//1
+                    v2.add(rs.getString("DateNaissance"));//2
+                    v2.add(rs.getString("LieuNaissance"));//3
+                    v2.add(rs.getString("Filiere"));//4
+                    v2.add(rs.getString("AnneeAttestation"));//5
+                    v2.add(rs.getString("Apoge"));//6
+                    v2.add(rs.getString("EmailInstitutionnel"));//7
+                }
+                Df.addRow(v2);
+                
+            }
+        }catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -78,7 +123,7 @@ public class Attestation_reussite extends javax.swing.JFrame {
                 {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Type de tage", "Debut de stage", "Fin de stage", "Nom de l'entreprise", "Apoge", "Nom", "Prenom", "Filiere", "EmailInstitutionnel"
+                "Nom", "Prenom", "DateNaissance", "LieuNaissance", "Filiere", "AnneeAttestation", "Apoge", "EmailInstitutionnel"
             }
         )
         {
@@ -91,6 +136,11 @@ public class Attestation_reussite extends javax.swing.JFrame {
 
     Refuser.setBackground(new java.awt.Color(255, 80, 80));
     Refuser.setText("Refuser");
+    Refuser.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            RefuserActionPerformed(evt);
+        }
+    });
 
     Accepter.setBackground(new java.awt.Color(80, 255, 80));
     Accepter.setText("Accepter");
@@ -343,6 +393,7 @@ public class Attestation_reussite extends javax.swing.JFrame {
     jLabel11.setForeground(new java.awt.Color(81, 69, 199));
     jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
     jLabel11.setText("Administration");
+    jLabel11.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     jLabel11.addMouseListener(new java.awt.event.MouseAdapter() {
         public void mouseClicked(java.awt.event.MouseEvent evt) {
             jLabel11MouseClicked(evt);
@@ -431,10 +482,17 @@ public class Attestation_reussite extends javax.swing.JFrame {
     private void AccepterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AccepterActionPerformed
         int i = jTable1.getSelectedRow();
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        if(i>=0){
-            GenererDemandeStage.DemandeStage(model.getValueAt(i, 0).toString(), model.getValueAt(i, 1).toString(), model.getValueAt(i, 2).toString(), model.getValueAt(i, 3).toString(),model.getValueAt(i, 4).toString(),model.getValueAt(i, 5).toString(),model.getValueAt(i, 6).toString(),model.getValueAt(i, 7).toString(),model.getValueAt(i, 8).toString());
-
-            //model.removeRow(i);
+        if(i>=0){            
+            try {
+                GenererPdf.AttestationReussite(model.getValueAt(i, 1).toString(), model.getValueAt(i, 0).toString(), model.getValueAt(i, 3).toString(), model.getValueAt(i, 2).toString(), model.getValueAt(i, 4).toString(), model.getValueAt(i, 5).toString(), model.getValueAt(i, 7).toString());
+                String sql = "INSERT INTO attestationreussite_historique values('"+model.getValueAt(i, 0).toString()+"','"+model.getValueAt(i, 1).toString()+"','"+model.getValueAt(i, 2).toString()+"','"+model.getValueAt(i, 3).toString()+"','"+model.getValueAt(i, 4).toString()+"','"+model.getValueAt(i, 5).toString()+"','"+model.getValueAt(i, 6).toString()+"','Acceptée')";
+                ps.executeUpdate(sql);
+                String supprimer = "DELETE FROM attestationreussite WHERE Nom = '"+model.getValueAt(i, 0).toString()+"' AND Prenom = '"+model.getValueAt(i, 1).toString()+"' AND DateNaissance = '"+model.getValueAt(i, 2).toString()+"' AND LieuNaissance = '"+model.getValueAt(i, 3).toString()+"' AND Filiere = '"+model.getValueAt(i, 4).toString()+"' AND AnneeAttestation = '"+model.getValueAt(i, 5).toString()+"' AND Apoge = '"+model.getValueAt(i, 6).toString()+"'";
+                ps.executeUpdate(supprimer);
+                model.removeRow(i);
+            } catch (SQLException ex) {
+                Logger.getLogger(Demande_stage.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }else{
             JOptionPane.showMessageDialog(null, "Selectionner une ligne !");
         }
@@ -488,6 +546,27 @@ public class Attestation_reussite extends javax.swing.JFrame {
     private void jLabel24MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel24MouseClicked
         System.exit(0);
     }//GEN-LAST:event_jLabel24MouseClicked
+
+    private void RefuserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefuserActionPerformed
+        int i = jTable1.getSelectedRow();
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        if(i>=0){            
+            try {
+                SendEmail.envoyerEmailRefus(model.getValueAt(i, 7).toString(),"L'attestation de réussite", model.getValueAt(i, 1).toString()+" "+model.getValueAt(i, 0).toString());
+                String sql = "INSERT INTO attestationreussite_historique values('"+model.getValueAt(i, 0).toString()+"','"+model.getValueAt(i, 1).toString()+"','"+model.getValueAt(i, 2).toString()+"','"+model.getValueAt(i, 3).toString()+"','"+model.getValueAt(i, 4).toString()+"','"+model.getValueAt(i, 5).toString()+"','"+model.getValueAt(i, 6).toString()+"','Refusée')";
+                ps.executeUpdate(sql);
+                String supprimer = "DELETE FROM attestationreussite WHERE Nom = '"+model.getValueAt(i, 0).toString()+"' AND Prenom = '"+model.getValueAt(i, 1).toString()+"' AND DateNaissance = '"+model.getValueAt(i, 2).toString()+"' AND LieuNaissance = '"+model.getValueAt(i, 3).toString()+"' AND Filiere = '"+model.getValueAt(i, 4).toString()+"' AND AnneeAttestation = '"+model.getValueAt(i, 5).toString()+"' AND Apoge = '"+model.getValueAt(i, 6).toString()+"'";
+                ps.executeUpdate(supprimer);
+                model.removeRow(i);
+            } catch (SQLException ex) {
+                Logger.getLogger(Demande_stage.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(Attestation_reussite.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }else{
+            JOptionPane.showMessageDialog(null, "Selectionner une ligne !");
+        }
+    }//GEN-LAST:event_RefuserActionPerformed
     
     
     
