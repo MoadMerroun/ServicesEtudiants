@@ -92,7 +92,7 @@ public class GenererPdf {
         doc.add(rect);
         doc.close();
         SendEmail.envoyerEmailAvecDoc(EmailInstitutionnel, "la demande de stage", "demande_de_stage_"+Prenom+"_"+Nom+"_"+formatter.format(date)+".pdf", Prenom+" "+Nom);
-        //Desktop.getDesktop().open(new File ("src\\main\\resources\\Documents\\Demande_De_Stage.pdf"));
+        Desktop.getDesktop().open(new File ("src\\main\\resources\\Documents\\demande_de_stage_"+Prenom+"_"+Nom+"_"+formatter.format(date)+".pdf"));
            
         } 
         catch (DocumentException ex) {
@@ -183,6 +183,8 @@ public class GenererPdf {
                     doc.add(rect);
                     doc.close();
                     SendEmail.envoyerEmailAvecDoc(EmailInstitutionnel, "la convention de stage", "convention_de_stage_"+Prenom+"_"+Nom+"_"+formatter1.format(date)+".pdf", Prenom+" "+Nom);
+                    Desktop.getDesktop().open(new File ("src\\main\\resources\\Documents\\convention_de_stage_"+Prenom+"_"+Nom+"_"+formatter1.format(date)+".pdf"));
+
         } catch (FileNotFoundException ex) {
             Logger.getLogger(GenererPdf.class.getName()).log(Level.SEVERE, null, ex);
         } catch (DocumentException ex) {
@@ -258,7 +260,9 @@ public class GenererPdf {
         doc.add(rect);
         doc.close();
         SendEmail.envoyerEmailAvecDoc(EmailInstitutionnel, "l'attestation d'inscription", "Attestation_d_inscription_"+Prenom+"_"+Nom+"_"+formatter.format(date)+".pdf", Prenom+" "+Nom);
-                 } catch (DocumentException ex) {
+        Desktop.getDesktop().open(new File ("src\\main\\resources\\Documents\\Attestation_d_inscription_"+Prenom+"_"+Nom+"_"+formatter.format(date)+".pdf"));
+
+        } catch (DocumentException ex) {
             Logger.getLogger(GenererPdf.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(GenererPdf.class.getName()).log(Level.SEVERE, null, ex);
@@ -314,6 +318,8 @@ public class GenererPdf {
             document.add(rect);
             document.close();
             SendEmail.envoyerEmailAvecDoc(EmailInstitutionnel, "l'attestation de reussite", "Attestation_de_reussite__"+Prenom+"_"+Nom+"_"+formatter.format(date)+".pdf", Prenom+" "+Nom); 
+            Desktop.getDesktop().open(new File ("src\\main\\resources\\Documents\\Attestation_de_reussite__"+Prenom+"_"+Nom+"_"+formatter.format(date)+".pdf"));
+
         } catch (FileNotFoundException ex) {
             Logger.getLogger(GenererPdf.class.getName()).log(Level.SEVERE, null, ex);
         } catch (DocumentException ex) {
