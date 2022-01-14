@@ -426,25 +426,19 @@ public class GenererPdf {
             Font f8 = new Font(Font.FontFamily.UNDEFINED,14,Font.BOLD);
             Font f9 = new Font(Font.FontFamily.UNDEFINED,10);
             Paragraph p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11,p12;
-            p1 = (new Paragraph(" Relevé des notes de la 2ème année",f2));
-            p2 = (new Paragraph(" Filière : Deux Années Préparatoires (2AP)",f1));
-            p3= (new Paragraph(" Année universitaire : " + AnneeNotes + "/" + (Integer.valueOf(AnneeNotes)+1) ,f3));
-            p4= (new Paragraph("\n L’élève Ingénieur :",f5));
-            p5= (new Paragraph(" Nom et Prénom : " + Nom + " " + Prenom,f5));
-            p6= (new Paragraph(" CNE           : " + CNE,f5));
-            p7= (new Paragraph(" Code Apogée     : " + Apoge,f5));
-            p8= (new Paragraph(" A obtenu les résultats suivants pour la deuxième année de la filière 2AP :",f5));
-            p9= (new Paragraph("\n"));
-            p10= (new Paragraph(" La présente attestation est délivrée à l’intéressé(e) pour servir et valoir ce que de droit.",f5));
-            p11= (new Paragraph(" Fait à Tétouan, le : "+formatter1.format(date),f5));
-            p12= (new Paragraph(" AC : Acquis par Compensation                                                           NV : Non Validé\n N.B. Le présent document n’est délivré qu’en un seul exemplaire. Il appartient à l’étudiant d’en faire des photocopies certifiées conformes.",f5));
+            p1=null;
+            p2=null;
+            p3=null;
+            p4=null;
+            p5=null;
+            p6=null;
+            p7=null;
+            p8=null;
+            p9=null;
+            p10=null;
+            p11=null;
+            p12=null;
             
-            p1.setAlignment(Element.ALIGN_CENTER);
-            p2.setAlignment(Element.ALIGN_CENTER);
-            p3.setAlignment(Element.ALIGN_CENTER);
-           //specify column widths
-           //Create Table object, Here 4 specify the no. of columns
-          
             PdfPTable pdfPTable1 = new PdfPTable(3);
              
             PdfPTable pdfPTable2 = new PdfPTable(2);
@@ -506,70 +500,106 @@ public class GenererPdf {
             PdfPCell pdfPCellN21 = null;
             PdfPCell pdfPCellN22 = null;
             
+              while(rs.next()){
+            if(rs.getString("Filiere").equalsIgnoreCase("2AP1")){
+                p1 = (new Paragraph(" Relevé des notes de la 1ère année",f2));
+            }
+            if(rs.getString("Filiere").equalsIgnoreCase("2AP2")){
+                p1 = (new Paragraph(" Relevé des notes de la 2ème année",f2));
+            }
+            if(rs.getString("Filiere").equalsIgnoreCase("GI1") || rs.getString("Filiere").equalsIgnoreCase("GC1")|| rs.getString("Filiere").equalsIgnoreCase("GM1")|| rs.getString("Filiere").equalsIgnoreCase("GSTR1")|| rs.getString("Filiere").equalsIgnoreCase("SCM1")){
+                p1 = (new Paragraph(" Relevé des notes de la 1ère année cycle d'ingénieur",f2));
+            }
+            if(rs.getString("Filiere").equalsIgnoreCase("GI2") || rs.getString("Filiere").equalsIgnoreCase("GC2")|| rs.getString("Filiere").equalsIgnoreCase("GM2")|| rs.getString("Filiere").equalsIgnoreCase("GSTR2")|| rs.getString("Filiere").equalsIgnoreCase("SCM2")){
+                p1 = (new Paragraph(" Relevé des notes de la 2ème année cycle d'ingénieur",f2));
+            }
+            if(rs.getString("Filiere").equalsIgnoreCase("GI3") || rs.getString("Filiere").equalsIgnoreCase("GC3")|| rs.getString("Filiere").equalsIgnoreCase("GM3")|| rs.getString("Filiere").equalsIgnoreCase("GSTR3")|| rs.getString("Filiere").equalsIgnoreCase("SCM3")){
+                p1 = (new Paragraph(" Relevé des notes de la 3ème année cycle d'ingénieur",f2));
+            }
+            p2 = (new Paragraph(" Filière : " + rs.getString("Filiere"),f1));
+            p3= (new Paragraph(" Année universitaire : " + AnneeNotes + "/" + (Integer.valueOf(AnneeNotes)+1) ,f3));
+            p4= (new Paragraph("\n L’élève Ingénieur :",f5));
+            p5= (new Paragraph(" Nom et Prénom : " + Nom + " " + Prenom,f5));
+            p6= (new Paragraph(" CNE           : " + CNE,f5));
+            p7= (new Paragraph(" Code Apogée     : " + Apoge,f5));
+            p8= (new Paragraph(" A obtenu les résultats suivants :",f5));
+            p9= (new Paragraph("\n"));
+            p10= (new Paragraph(" La présente attestation est délivrée à l’intéressé(e) pour servir et valoir ce que de droit.",f5));
+            p11= (new Paragraph(" Fait à Tétouan, le : "+formatter1.format(date),f5));
+            p12= (new Paragraph(" AC : Acquis par Compensation                                                           NV : Non Validé\n N.B. Le présent document n’est délivré qu’en un seul exemplaire. Il appartient à l’étudiant d’en faire des photocopies certifiées conformes.",f5));
             
+            p1.setAlignment(Element.ALIGN_CENTER);
+            p2.setAlignment(Element.ALIGN_CENTER);
+            p3.setAlignment(Element.ALIGN_CENTER);
+           //specify column widths
+           //Create Table object, Here 4 specify the no. of columns
             
-            while(rs.next()){
             //Create cells
             pdfPCell1 = new PdfPCell(new Paragraph("       Intitulé du Module\n",f6));
             pdfPCell2 = new PdfPCell(new Paragraph("                Note/20",f6));
             pdfPCell3 = new PdfPCell(new Paragraph("                Résultat",f6));
             //LIGNE2
             pdfPCell4 = new PdfPCell(new Paragraph(rs.getString("NomModule1")+" \n",f4));
-            pdfPCell5 = new PdfPCell(new Paragraph("               11,5",f9));
-            pdfPCell6 = new PdfPCell(new Paragraph("               Validé",f9));
+            pdfPCell5 = new PdfPCell(new Paragraph("               " + rs.getString("NoteModule1"),f9));
+            pdfPCell6 = new PdfPCell(new Paragraph("               " + rs.getString("ResultatModule1"),f9));	
             
             pdfPCell7 = new PdfPCell(new Paragraph(rs.getString("NomModule2") +" \n",f4));
-            pdfPCell8 = new PdfPCell(new Paragraph("               10",f9));
-            pdfPCell9 = new PdfPCell(new Paragraph("               Validé",f9));
+            pdfPCell8 = new PdfPCell(new Paragraph("               " + rs.getString("NoteModule2"),f9));
+            pdfPCell9 = new PdfPCell(new Paragraph("               " + rs.getString("ResultatModule2"),f9));
             
             pdfPCell10 = new PdfPCell(new Paragraph(rs.getString("NomModule3")+" \n",f4));
-            pdfPCell11 = new PdfPCell(new Paragraph("               16",f9));
-            pdfPCell12 = new PdfPCell(new Paragraph("               Validé",f9));
+            pdfPCell11 = new PdfPCell(new Paragraph("               " + rs.getString("NoteModule3"),f9));
+            pdfPCell12 = new PdfPCell(new Paragraph("               " + rs.getString("ResultatModule3"),f9));
             
             pdfPCell13 = new PdfPCell(new Paragraph(rs.getString("NomModule4")+" \n",f4));
-            pdfPCell14 = new PdfPCell(new Paragraph("               10",f9));
-            pdfPCell15 = new PdfPCell(new Paragraph("               Validé",f9));
+            pdfPCell14 = new PdfPCell(new Paragraph("               " + rs.getString("NoteModule4"),f9));
+            pdfPCell15 = new PdfPCell(new Paragraph("               " + rs.getString("ResultatModule4"),f9));
             
             pdfPCell16 = new PdfPCell(new Paragraph(rs.getString("NomModule5")+" \n",f4));
-            pdfPCell17 = new PdfPCell(new Paragraph("               10",f9));
-            pdfPCell18 = new PdfPCell(new Paragraph("               Validé",f9));
+            pdfPCell17 = new PdfPCell(new Paragraph("               " + rs.getString("NoteModule5"),f9));
+            pdfPCell18 = new PdfPCell(new Paragraph("               " + rs.getString("ResultatModule5"),f9));
             
             pdfPCell19 = new PdfPCell(new Paragraph(rs.getString("NomModule6")+" \n",f4));
-            pdfPCell20 = new PdfPCell(new Paragraph("               15,25",f9));
-            pdfPCell21 = new PdfPCell(new Paragraph("               Validé",f9));
+            pdfPCell20 = new PdfPCell(new Paragraph("               " + rs.getString("NoteModule6"),f9));
+            pdfPCell21 = new PdfPCell(new Paragraph("               " + rs.getString("ResultatModule6"),f9));
             
             pdfPCell22 = new PdfPCell(new Paragraph(rs.getString("NomModule7")+" \n",f4));
-            pdfPCell23 = new PdfPCell(new Paragraph("               15",f9));
-            pdfPCell24 = new PdfPCell(new Paragraph("               Validé",f9));
+            pdfPCell23 = new PdfPCell(new Paragraph("               " + rs.getString("NoteModule7"),f9));
+            pdfPCell24 = new PdfPCell(new Paragraph("               " + rs.getString("ResultatModule7"),f9));
             //LIGNE2
             pdfPCell25 = new PdfPCell(new Paragraph(rs.getString("NomModule8")+" \n",f4));
-            pdfPCell26 = new PdfPCell(new Paragraph("               12",f9));
-            pdfPCell27 = new PdfPCell(new Paragraph("               Validé",f9));
+            pdfPCell26 = new PdfPCell(new Paragraph("               " + rs.getString("NoteModule8"),f9));
+            pdfPCell27 = new PdfPCell(new Paragraph("               " + rs.getString("ResultatModule8"),f9));
             
             pdfPCell28 = new PdfPCell(new Paragraph(rs.getString("NomModule9")+" \n",f4));
-            pdfPCell29 = new PdfPCell(new Paragraph("               15",f9));
-            pdfPCell30 = new PdfPCell(new Paragraph("               Validé",f9));
+            pdfPCell29 = new PdfPCell(new Paragraph("               " + rs.getString("NoteModule9"),f9));
+            pdfPCell30 = new PdfPCell(new Paragraph("               " + rs.getString("ResultatModule9"),f9));
             
             pdfPCell31 = new PdfPCell(new Paragraph(rs.getString("NomModule10")+" \n",f4));
-            pdfPCell32 = new PdfPCell(new Paragraph("               14,18",f9));
-            pdfPCell33 = new PdfPCell(new Paragraph("               Validé",f9));
+            pdfPCell32 = new PdfPCell(new Paragraph("               " + rs.getString("NoteModule10"),f9));
+            pdfPCell33 = new PdfPCell(new Paragraph("               " + rs.getString("ResultatModule10"),f9));
             
             pdfPCell34 = new PdfPCell(new Paragraph(rs.getString("NomModule11")+" \n",f4));
-            pdfPCell35 = new PdfPCell(new Paragraph("               15,6",f9));
-            pdfPCell36 = new PdfPCell(new Paragraph("               Validé",f9));
+            pdfPCell35 = new PdfPCell(new Paragraph("               " + rs.getString("NoteModule11"),f9));
+            pdfPCell36 = new PdfPCell(new Paragraph("               " + rs.getString("ResultatModule11"),f9));
             
             pdfPCell37 = new PdfPCell(new Paragraph(rs.getString("NomModule12")+" \n",f4));
-            pdfPCell38 = new PdfPCell(new Paragraph("               15,19",f9));
-            pdfPCell39 = new PdfPCell(new Paragraph("               Validé",f9));
+            pdfPCell38 = new PdfPCell(new Paragraph("               " + rs.getString("NoteModule12"),f9));
+            pdfPCell39 = new PdfPCell(new Paragraph("               " + rs.getString("ResultatModule12"),f9));
             
             pdfPCellN01 = new PdfPCell(new Paragraph("                 Points du jury\n\n",f7));
-            pdfPCellN02 = new PdfPCell(new Paragraph("  "));
-            pdfPCellN12 = new PdfPCell(new Paragraph("                 13,311",f8));
+            if(rs.getString("PointsJury")==null){
+                pdfPCellN02 = new PdfPCell(new Paragraph("  "));
+            }
+            else{
+                pdfPCellN02 = new PdfPCell(new Paragraph("  " + rs.getString("PointsJury")));
+            }
+            pdfPCellN12 = new PdfPCell(new Paragraph("                 " + rs.getString("MoyAnnee"),f8));
 
             pdfPCellN11 = new PdfPCell(new Paragraph("                 Moyenne du l’année\n\n",f7));
             
             pdfPCellN21 = new PdfPCell(new Paragraph("                 Résultat de l’année\n\n",f7));
-            pdfPCellN22 = new PdfPCell(new Paragraph("                 Admis",f8));
+            pdfPCellN22 = new PdfPCell(new Paragraph("                 " + rs.getString("ResultatAnnee"),f8));
            
             }
             //Add cells to table
