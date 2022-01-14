@@ -4,6 +4,15 @@
  */
 package com.mycompany.servicesetudiants;
 
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -12,12 +21,50 @@ import javax.swing.table.DefaultTableModel;
  * @author Surface Pro
  */
 public class Attestation_scolarite extends javax.swing.JFrame {
-
+    Connection conn = ConnexionBD.connecterbd();
+    PreparedStatement ps = null;
+    ResultSet rs= null;
+    ResultSetMetaData Rss = null;
     /**
      * Creates new form Attestation_scolarite
      */
     public Attestation_scolarite() {
         initComponents();
+        ConnexionBD.connecterbd();
+        UPdate_table();
+    }
+    public void UPdate_table(){
+        int c;
+        String login="SELECT attestationscolarite.Prenom, attestationscolarite.Nom, attestationscolarite.CIN, attestationscolarite.CodeEtudiant, etudiants.DateNaissance, attestationscolarite.LieuNaissance, attestationscolarite.Filiere, etudiants.EmailInstitutionnel, attestationscolarite.Apoge FROM attestationscolarite inner join etudiants on attestationscolarite.Apoge=etudiants.Apoge";
+        try {
+            ps=conn.prepareStatement(login);
+            rs=ps.executeQuery();
+            Rss = rs.getMetaData();
+            c=Rss.getColumnCount();
+            
+            DefaultTableModel Df =(DefaultTableModel) jTable1.getModel();
+            
+            Df.setRowCount(0);
+            
+            while(rs.next()){
+                Vector v2 = new Vector();
+                for(int i=1;i<=c;i++){
+                    v2.add(rs.getString("Prenom"));//0
+                    v2.add(rs.getString("Nom"));//1
+                    v2.add(rs.getString("CIN"));//2
+                    v2.add(rs.getString("CodeEtudiant"));//3
+                    v2.add(rs.getString("DateNaissance"));//4
+                    v2.add(rs.getString("LieuNaissance"));//5
+                    v2.add(rs.getString("Filiere"));//6
+                    v2.add(rs.getString("EmailInstitutionnel"));//7
+                    v2.add(rs.getString("Apoge"));//8                    
+                }
+                Df.addRow(v2);
+                
+            }
+        }catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
     }
 
     /**
@@ -68,7 +115,7 @@ public class Attestation_scolarite extends javax.swing.JFrame {
         jLabel10.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
         jLabel10.setForeground(new java.awt.Color(211, 222, 234));
         jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel10.setText("Les demande de stage : ");
+        jLabel10.setText("Attestation de scolarité");
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -78,7 +125,7 @@ public class Attestation_scolarite extends javax.swing.JFrame {
                 {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Type de tage", "Debut de stage", "Fin de stage", "Nom de l'entreprise", "Apoge", "Nom", "Prenom", "Filiere", "EmailInstitutionnel"
+                "Prenom","Nom", "CIN", "CodeEtudiant", "DateNaissance", "LieuNaissance", "Filiere", "EmailInstitutionnel","Apoge"
             }
         )
         {
@@ -91,6 +138,11 @@ public class Attestation_scolarite extends javax.swing.JFrame {
 
     Refuser.setBackground(new java.awt.Color(255, 80, 80));
     Refuser.setText("Refuser");
+    Refuser.addActionListener(new java.awt.event.ActionListener() {
+        public void actionPerformed(java.awt.event.ActionEvent evt) {
+            RefuserActionPerformed(evt);
+        }
+    });
 
     Accepter.setBackground(new java.awt.Color(80, 255, 80));
     Accepter.setText("Accepter");
@@ -433,9 +485,16 @@ public class Attestation_scolarite extends javax.swing.JFrame {
         int i = jTable1.getSelectedRow();
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         if(i>=0){
-            GenererPdf.DemandeStage(model.getValueAt(i, 0).toString(), model.getValueAt(i, 1).toString(), model.getValueAt(i, 2).toString(), model.getValueAt(i, 3).toString(),model.getValueAt(i, 4).toString(),model.getValueAt(i, 5).toString(),model.getValueAt(i, 6).toString(),model.getValueAt(i, 7).toString(),model.getValueAt(i, 8).toString());
-
-            //model.removeRow(i);
+            try {
+                GenererPdf.AttestationScolarite(model.getValueAt(i, 0).toString(), model.getValueAt(i, 1).toString(), model.getValueAt(i, 2).toString(), model.getValueAt(i, 3).toString(), model.getValueAt(i, 4).toString(), model.getValueAt(i, 5).toString(), model.getValueAt(i, 6).toString(), model.getValueAt(i, 7).toString());
+                String sql = "INSERT INTO attestationscolarite_historique values('"+model.getValueAt(i, 1).toString()+"','"+model.getValueAt(i, 0).toString()+"','"+model.getValueAt(i, 2).toString()+"','"+model.getValueAt(i, 3).toString()+"','"+model.getValueAt(i, 6).toString()+"','"+model.getValueAt(i, 5).toString()+"','"+model.getValueAt(i, 8).toString()+"','Acceptée')";
+                ps.executeUpdate(sql);
+                String supprimer = "DELETE FROM attestationscolarite WHERE Apoge = '"+model.getValueAt(i, 8).toString()+"'";
+                ps.executeUpdate(supprimer);
+                model.removeRow(i);
+            } catch (SQLException ex) {
+                Logger.getLogger(Attestation_scolarite.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }else{
             JOptionPane.showMessageDialog(null, "Selectionner une ligne !");
         }
@@ -489,6 +548,27 @@ public class Attestation_scolarite extends javax.swing.JFrame {
         dispose();
         new Historique().setVisible(true);
     }//GEN-LAST:event_jLabel6MouseClicked
+
+    private void RefuserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefuserActionPerformed
+        int i = jTable1.getSelectedRow();
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        if(i>=0){
+            try {
+                SendEmail.envoyerEmailRefus(model.getValueAt(i, 7).toString(), "l'attestation de scolarite", model.getValueAt(i, 1).toString()+" "+model.getValueAt(i, 0).toString());
+                String sql = "INSERT INTO attestationscolarite_historique values('"+model.getValueAt(i, 1).toString()+"','"+model.getValueAt(i, 0).toString()+"','"+model.getValueAt(i, 2).toString()+"','"+model.getValueAt(i, 3).toString()+"','"+model.getValueAt(i, 6).toString()+"','"+model.getValueAt(i, 5).toString()+"','"+model.getValueAt(i, 8).toString()+"','Refusée')";
+                ps.executeUpdate(sql);
+                String supprimer = "DELETE FROM attestationscolarite WHERE Apoge = '"+model.getValueAt(i, 8).toString()+"'";
+                ps.executeUpdate(supprimer);
+                model.removeRow(i);
+            } catch (SQLException ex) {
+                Logger.getLogger(Attestation_inscription.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(Attestation_inscription.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }else{
+            JOptionPane.showMessageDialog(null, "Selectionner une ligne !");
+        }
+    }//GEN-LAST:event_RefuserActionPerformed
 
     /**
      * @param args the command line arguments

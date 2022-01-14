@@ -319,7 +319,7 @@ public class Attestation_inscription extends javax.swing.JFrame {
         jLabel10.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
         jLabel10.setForeground(new java.awt.Color(211, 222, 234));
         jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel10.setText("Les demande de stage : ");
+        jLabel10.setText("Attestation d’inscription");
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {

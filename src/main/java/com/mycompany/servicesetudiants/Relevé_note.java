@@ -4,11 +4,15 @@
  */
 package com.mycompany.servicesetudiants;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -31,7 +35,7 @@ public class Relevé_note extends javax.swing.JFrame {
     }
     public void UPdate_table(){
         int c;
-        String login="SELECT Nom, Prenom, Apoge, CodeEtudiant, Annee_debut, AdresseEtudiant, anneNotes, etudiants.EmailInstitutionnel FROM convocationstage inner join etudiants on etudiants.Apoge=convocationstage.Apoge";
+        String login="SELECT relevenotes.Nom, relevenotes.Prenom, relevenotes.Apoge, relevenotes.CodeEtudiant, relevenotes.AnneeDebut, relevenotes.AdresseEtudiant, relevenotes.AnneeNotes, etudiants.EmailInstitutionnel FROM relevenotes inner join etudiants on etudiants.Apoge=relevenotes.Apoge";
         try {
             ps=conn.prepareStatement(login);
             rs=ps.executeQuery();
@@ -45,18 +49,14 @@ public class Relevé_note extends javax.swing.JFrame {
             while(rs.next()){
                 Vector v2 = new Vector();
                 for(int i=1;i<=c;i++){
-                    v2.add(rs.getString("Tel"));//0
-                    v2.add(rs.getString("StartDate"));//1
-                    v2.add(rs.getString("EndDate"));//2
-                    v2.add(rs.getString("Apoge"));//3
-                    v2.add(rs.getString("Nom"));//4
-                    v2.add(rs.getString("Prenom"));//5
-                    v2.add(rs.getString("Filiere"));//6
-                    v2.add(rs.getString("RaisonSociale"));//7
-                    v2.add(rs.getString("Addresse"));//8
-                    v2.add(rs.getString("EmailEntreprise"));//9
-                    v2.add(rs.getString("NomEncadrant"));//10
-                    v2.add(rs.getString("EmailInstitutionnel"));//11
+                    v2.add(rs.getString("Nom"));//0
+                    v2.add(rs.getString("Prenom"));//1
+                    v2.add(rs.getString("Apoge"));//2
+                    v2.add(rs.getString("CodeEtudiant"));//3
+                    v2.add(rs.getString("AnneeDebut"));//4
+                    v2.add(rs.getString("AdresseEtudiant"));//5
+                    v2.add(rs.getString("AnneeNotes"));//6
+                    v2.add(rs.getString("EmailInstitutionnel"));//7
                     }
                 Df.addRow(v2);
                 
@@ -321,7 +321,7 @@ public class Relevé_note extends javax.swing.JFrame {
         jLabel10.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
         jLabel10.setForeground(new java.awt.Color(211, 222, 234));
         jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel10.setText("Les demande de stage : ");
+        jLabel10.setText("Relevé de note");
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -331,7 +331,7 @@ public class Relevé_note extends javax.swing.JFrame {
                 {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Type de tage", "Debut de stage", "Fin de stage", "Nom de l'entreprise", "Apoge", "Nom", "Prenom", "Filiere", "EmailInstitutionnel"
+                "Nom", "Prenom", "Apoge", "CodeEtudiant", "AnneeDebut", "AdresseEtudiant", "AnneeNotes", "EmailInstitutionnel"
             }
         )
         {
@@ -527,9 +527,16 @@ public class Relevé_note extends javax.swing.JFrame {
         int i = jTable1.getSelectedRow();
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         if(i>=0){
-            GenererPdf.DemandeStage(model.getValueAt(i, 0).toString(), model.getValueAt(i, 1).toString(), model.getValueAt(i, 2).toString(), model.getValueAt(i, 3).toString(),model.getValueAt(i, 4).toString(),model.getValueAt(i, 5).toString(),model.getValueAt(i, 6).toString(),model.getValueAt(i, 7).toString(),model.getValueAt(i, 8).toString());
-
-            //model.removeRow(i);
+            try {
+                GenererPdf.ReleveNote(model.getValueAt(i, 1).toString(), model.getValueAt(i, 0).toString(), model.getValueAt(i, 7).toString(), model.getValueAt(i, 3).toString(), model.getValueAt(i, 2).toString(), model.getValueAt(i, 6).toString());
+                String sql = "INSERT INTO relevenotes_historique values('"+model.getValueAt(i, 0).toString()+"','"+model.getValueAt(i, 1).toString()+"','"+model.getValueAt(i, 2).toString()+"','"+model.getValueAt(i, 3).toString()+"','"+model.getValueAt(i, 4).toString()+"','"+model.getValueAt(i, 5).toString()+"','"+model.getValueAt(i, 6).toString()+"','Acceptée')";
+                ps.executeUpdate(sql);
+                String supprimer = "DELETE FROM relevenotes WHERE Apoge = '"+model.getValueAt(i, 2).toString()+"' AND AnneeNotes = '"+model.getValueAt(i, 6).toString()+"'";
+                ps.executeUpdate(supprimer);
+                model.removeRow(i);
+            } catch (SQLException ex) {
+                Logger.getLogger(Demande_stage.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }else{
             JOptionPane.showMessageDialog(null, "Selectionner une ligne !");
         }
@@ -545,7 +552,24 @@ public class Relevé_note extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel24MouseClicked
 
     private void RefuserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RefuserActionPerformed
-        // TODO add your handling code here:
+        int i = jTable1.getSelectedRow();
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        if(i>=0){            
+                try {
+                    SendEmail.envoyerEmailRefus(model.getValueAt(i, 7).toString(),"le relevé de notes",model.getValueAt(i, 1).toString() + " " + model.getValueAt(i, 0).toString());
+                    String sql = "INSERT INTO relevenotes_historique values('"+model.getValueAt(i, 0).toString()+"','"+model.getValueAt(i, 1).toString()+"','"+model.getValueAt(i, 2).toString()+"','"+model.getValueAt(i, 3).toString()+"','"+model.getValueAt(i, 4).toString()+"','"+model.getValueAt(i, 5).toString()+"','"+model.getValueAt(i, 6).toString()+"','Refusée')";
+                    ps.executeUpdate(sql);
+                    String supprimer = "DELETE FROM relevenotes WHERE Apoge = '"+model.getValueAt(i, 2).toString()+"' AND AnneeNotes = '"+model.getValueAt(i, 6).toString()+"'";
+                    ps.executeUpdate(supprimer);
+                    model.removeRow(i);
+                } catch (SQLException ex) {
+                Logger.getLogger(Relevé_note.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(Relevé_note.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }else{
+            JOptionPane.showMessageDialog(null, "Selectionner une ligne !");
+        }
     }//GEN-LAST:event_RefuserActionPerformed
 
     /**

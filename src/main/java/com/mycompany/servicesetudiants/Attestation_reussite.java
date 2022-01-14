@@ -113,7 +113,7 @@ public class Attestation_reussite extends javax.swing.JFrame {
         jLabel10.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
         jLabel10.setForeground(new java.awt.Color(211, 222, 234));
         jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel10.setText("Les demande de stage : ");
+        jLabel10.setText("Attestation de réussite");
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {

@@ -135,7 +135,7 @@
               <Color blue="ea" green="de" red="d3" type="rgb"/>
             </Property>
             <Property name="horizontalAlignment" type="int" value="0"/>
-            <Property name="text" type="java.lang.String" value="Les demande de stage : "/>
+            <Property name="text" type="java.lang.String" value="Convention de stage"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="Refuser">

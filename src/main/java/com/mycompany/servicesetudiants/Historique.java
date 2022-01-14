@@ -50,7 +50,7 @@ public class Historique extends javax.swing.JFrame {
     }
     public void afficherNbReleveNote(){
         int c;
-        String login="SELECT count(Nom) FROM relevenotes";
+        String login="SELECT count(Nom) FROM relevenotes_historique";
         try {
             ps=conn.prepareStatement(login);
             rs=ps.executeQuery();
@@ -64,7 +64,7 @@ public class Historique extends javax.swing.JFrame {
     }
     public void afficherNbAttestationScolarite(){
         int c;
-        String login="SELECT count(Nom) FROM attestationscolarite";
+        String login="SELECT count(Nom) FROM attestationscolarite_historique";
         try {
             ps=conn.prepareStatement(login);
             rs=ps.executeQuery();
