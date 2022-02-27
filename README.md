@@ -2,12 +2,11 @@
 
 ## Author : Moad MERROUN
 
-This is an application for school documents, the user ( a student, who already exists in students database) can request a school document using the web application, and the admin 
-can accept the request or deny it. If the request is accepted, the user get the requested document in his email, while if it is denied the user get an email of rejection.
+This is an application for school documents, the user ( a student, who already exists in students database) can request a school document using the web application, and the admin can accept the request or deny it. If the request is accepted, the user get the requested document in his email, while if it is denied the user get an email of rejection.
 
 This repo contains the code of the desktop application (the admin interface in this project), while the user interface (where you demand the documents) was done by my classmate.
 
-I coded this project using Java for backend, mysql database, and the front was realised using the NetBeans IDE GUI Builder, I have also used maven to download the dependancies used in this project like : iText and JavaMail.
+I developed this project using Java for backend, mysql database, and the front was realised using the NetBeans IDE GUI Builder, I have also used maven to download the dependancies used in this project like : iText and JavaMail.
 
 Six documents can be requested : certificate of study, certificate of achievement, certificate of registration, internship application, internship agreement and transcript.
 
